@@ -9,6 +9,7 @@
 #include "Rectangle.h"
 #include "Trapeze.h"
 #include "Polyline.h"
+#include "Polyfigure.h"
 
 struct loader {
 	std::vector<std::unique_ptr<Figure>> load(std::ifstream& is) {
@@ -84,7 +85,7 @@ struct loader {
 				}
 				Brush load_clr{};
 				is >> load_clr.red >> load_clr.green >> load_clr.blue;
-				figures.emplace_back(std::make_unique<Polyline>(vertices));
+				figures.emplace_back(std::make_unique<Polyfigure>(vertices));
 				(*figures[figures.size() - 1]).addBrush(load_clr);
 			}
 		}
