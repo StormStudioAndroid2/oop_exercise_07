@@ -40,14 +40,14 @@
 		while (x >= y)
 		{
 			//  Each of the following renders an octant of the circle
-			renderer.draw_line(centreX + x, centreY - y, centreX + x + 1, centreY - y + 1);
-			renderer.draw_line(centreX + x, centreY + y, centreX + x + 1, centreY + y + 1);
-			renderer.draw_line(centreX - x, centreY - y, centreX - x + 1, centreY - y + 1);
-			renderer.draw_line(centreX - x, centreY + y, centreX - x + 1, centreY + y + 1);
-			renderer.draw_line(centreX + y, centreY - x, centreX + y + 1, centreY - x + 1);
-			renderer.draw_line(centreX + y, centreY + x, centreX + y + 1, centreY + x + 1);
-			renderer.draw_line(centreX - y, centreY - x, centreX - y + 1, centreY - x + 1);
-			renderer.draw_line(centreX - y, centreY + x, centreX - y + 1, centreY + x + 1);
+			renderer.draw_point(centreX + x, centreY - y);
+			renderer.draw_point(centreX + x, centreY + y);
+			renderer.draw_point(centreX - x, centreY - y);
+			renderer.draw_point(centreX - x, centreY + y);
+			renderer.draw_point(centreX + y, centreY - x);
+			renderer.draw_point(centreX + y, centreY + x);
+			renderer.draw_point(centreX - y, centreY - x);
+			renderer.draw_point(centreX - y, centreY + x);
 
 			if (error <= 0)
 			{

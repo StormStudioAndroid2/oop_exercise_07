@@ -25,6 +25,7 @@ struct renderer {
   void clear() const;
   // draw segment with current color
   void draw_line(int32_t x1, int32_t y1, int32_t x2, int32_t y2) const;
+  void draw_point(int32_t x, int32_t y) const;
 
   // every command draws to a temporary buffer
   // this function swaps temporary buffer containing new frame with current frame

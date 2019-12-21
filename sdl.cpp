@@ -53,7 +53,9 @@ void renderer::present() const {
   ImGui_ImplSDL2_NewFrame(window_);
   ImGui::NewFrame();
 }
-
+void renderer::draw_point(int32_t x, int32_t y) const {
+	SDL_RenderDrawPoint(renderer_, x, y);
+}
 quit_event::quit_event(const SDL_QuitEvent& e): event_(e) {}
 
 mouse_button_event::mouse_button_event(const SDL_MouseButtonEvent& e): event_(e) {}
