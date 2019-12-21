@@ -5,6 +5,8 @@
 #include <array>
 #include <vector>
 #include <math.h>
+#include <iostream>
+#include <fstream>
 #define INF INT16_MAX;
 struct vertex {
 	int32_t x, y;

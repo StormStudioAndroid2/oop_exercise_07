@@ -31,6 +31,9 @@ void Program::remove(int remove_id) {
 	 }
 }
  void Program::mouseClickListener(sdl::mouse_button_event mouse_button_event) {
+	vertex v1;
+	v1.x = mouse_button_event.x();
+	v1.y = mouse_button_event.y();
 	 if (factory.isBuilding()) {
 		 std::unique_ptr<Figure> figure = factory.buildingFigure(mouse_button_event);
 		 if (figure) {
@@ -42,7 +45,7 @@ void Program::remove(int remove_id) {
 	 else {
 		 if (mouse_button_event.button() == sdl::mouse_button_event::right && mouse_button_event.type() == sdl::mouse_button_event::down) {
 			 for (int i = 0; i < figures.size(); ++i) {
-				 if (figures[i]->isInside(vertex{ mouse_button_event.x(), mouse_button_event.y() })) {
+				 if (figures[i]->isInside(v1)) {
 					 std::unique_ptr<Action> action = std::make_unique<DeleteAction>(std::move(figures[i]),i);
 					 history.push(std::move(action));
 					 figures.erase(figures.begin() + i);

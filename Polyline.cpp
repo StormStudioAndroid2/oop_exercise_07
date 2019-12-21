@@ -1,4 +1,4 @@
-#pragma once
+
 #include "Polyline.h"
 
 Polyline::Polyline(const std::vector<vertex>& vertices) : vertices_(vertices) {}

@@ -1,4 +1,4 @@
-#pragma once
+
 #include "Polyfigure.h"
 
 	Polyfigure::Polyfigure(const std::vector<vertex>& vertices) : vertices_(vertices) {}
