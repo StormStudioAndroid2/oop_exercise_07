@@ -29,39 +29,18 @@
 
 	void Circle::DrawCircle(const sdl::renderer&renderer, int32_t centreX, int32_t centreY, int32_t radius)
 	{
-		const int32_t diameter = (radius * 2);
+		int points_count = 999;
+		double step = 2 * M_PI / points_count;
+		vertex first_point;
+		first_point.x = centreX + radius;
+		first_point.y = centreY;
+		for (int i = 1; i < 1000; ++i) {
+			vertex new_point;
+			new_point.x = centreX + radius * cos(step*i);
+			new_point.y = centreY + radius * sin(step*i);
 
-		int32_t x = (radius - 1);
-		int32_t y = 0;
-		int32_t tx = 1;
-		int32_t ty = 1;
-		int32_t error = (tx - diameter);
-
-		while (x >= y)
-		{
-			//  Each of the following renders an octant of the circle
-			renderer.draw_point(centreX + x, centreY - y);
-			renderer.draw_point(centreX + x, centreY + y);
-			renderer.draw_point(centreX - x, centreY - y);
-			renderer.draw_point(centreX - x, centreY + y);
-			renderer.draw_point(centreX + y, centreY - x);
-			renderer.draw_point(centreX + y, centreY + x);
-			renderer.draw_point(centreX - y, centreY - x);
-			renderer.draw_point(centreX - y, centreY + x);
-
-			if (error <= 0)
-			{
-				++y;
-				error += ty;
-				ty += 2;
-			}
-
-			if (error > 0)
-			{
-				--x;
-				tx += 2;
-				error += (tx - diameter);
-			}
+			renderer.draw_line(first_point.x, first_point.y, new_point.x, new_point.y);
+			first_point = new_point;
 		}
 	}
 	int32_t Circle::getLength(const vertex& v1, const vertex& v2) {
