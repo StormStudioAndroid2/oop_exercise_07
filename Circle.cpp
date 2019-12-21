@@ -29,20 +29,20 @@
 
 	void Circle::DrawCircle(const sdl::renderer&renderer, int32_t centreX, int32_t centreY, int32_t radius)
 	{
-		int points_count = 999;
-		double step = 2 * M_PI / points_count;
-		vertex first_point;
-		first_point.x = centreX + radius;
-		first_point.y = centreY;
-		for (int i = 1; i < 1000; ++i) {
-			vertex new_point;
-			new_point.x = centreX + radius * cos(step*i);
-			new_point.y = centreY + radius * sin(step*i);
-
-			renderer.draw_line(first_point.x, first_point.y, new_point.x, new_point.y);
-			first_point = new_point;
-		}
-	}
+    int points_count = 999;
+    double step = 2*M_PI / points_count;
+    vertex first_point;
+    first_point.x= centreX+radius;
+    first_point.y= centreY;
+ 
+    for (int i = 1; i < 1000; ++i) {
+        vertex new_point;
+        new_point.x = centreX+radius * cos(step * i);
+        new_point.y = centreY+radius * sin(step * i);
+        renderer.draw_line(first_point.x, first_point.y, new_point.x, new_point.y);
+        first_point = new_point;
+    }
+}
 	int32_t Circle::getLength(const vertex& v1, const vertex& v2) {
 		return (int32_t)sqrt((v1.x - v2.x)*(v1.x - v2.x) + (v1.y - v2.y)*(v1.y - v2.y));
 	}
