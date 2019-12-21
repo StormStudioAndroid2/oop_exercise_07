@@ -7,7 +7,17 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(lab7x
   main.cpp
+  Figure.cpp
+  Factory.cpp
+  Trapeze.cpp
+  Circle.cpp
+  Rectangle.cpp
+  Rhombus.cpp
+  Polyline.cpp
+  Polyfigure.cpp
   sdl.cpp
+  Program.cpp
+  Loader.cpp
 )
 
 add_subdirectory(lib/SDL2/)

@@ -1,23 +1,27 @@
 #pragma once
-#include "Figure.h"
-#define INF 1000000; 
 
-int32_t max(int32_t a, int32_t b) {
-	if (a > b) {
-		return a;
+#include "Figure.h"
+
+
+
+	void CreateAction::undoAction(std::vector<std::unique_ptr<Figure>>& figures)  {
+		figures.erase(figures.end() - 1);
 	}
-	return b;
-}
-int32_t min(int32_t a, int32_t b) {
-	if (a < b) {
-		return a;
+	
+
+	void DeleteAction::undoAction(std::vector<std::unique_ptr<Figure>>& figures)  {
+		figures.insert(figures.begin() + index, std::move(figure));
 	}
-	return b;
-}
+	DeleteAction::DeleteAction(std::unique_ptr<Figure> figure, size_t index) {
+		this->figure = (std::move(figure));
+		this->index = index;
+	}
+
+
 bool onSegment(vertex p, vertex q, vertex r)
 {
-	if (q.x <= max(p.x, r.x) && q.x >= min(p.x, r.x) &&
-		q.y <= max(p.y, r.y) && q.y >= min(p.y, r.y))
+	if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
+		q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y))
 		return true;
 	return false;
 }
@@ -68,42 +72,8 @@ bool doIntersect(vertex p1, vertex q1, vertex p2, vertex q2)
 }
 
 // Returns true if the vertex p lies inside the polygon[] with n vertices 
-template<std::size_t SIZE>
 
-bool isInside1(std::array<vertex, SIZE> polygon, vertex p)
-{
-	// There must be at least 3 vertices in polygon[] 
-	int n = polygon.size();
-	if (n < 3)  return false;
 
-	// Create a vertex for line segment from p to infinite 
-	vertex extreme;
-	extreme.x = INF;
-	extreme.y = p.y;
-
-	// Count intersections of the above line with sides of polygon 
-	int count = 0, i = 0;
-	do	{
-		int next = (i + 1) % n;
-
-		// Check if the line segment from 'p' to 'extreme' intersects 
-		// with the line segment from 'polygon[i]' to 'polygon[next]' 
-		if (doIntersect(polygon[i], polygon[next], p, extreme))
-		{
-			// If the vertex 'p' is colinear with line segment 'i-next', 
-			// then check if it lies on segment. If it lies, return true, 
-			// otherwise false 
-			if (orientation(polygon[i], p, polygon[next]) == 0)
-				return onSegment(polygon[i], p, polygon[next]);
-
-			count++;
-		}
-		i = next;
-	} while (i != 0);
-
-	// Return true if count is odd, false otherwise 
-	return count & 1;  // Same as (count%2 == 1) 
-}
 bool isInside1(std::vector<vertex>& polygon, vertex p)
 {
 	// There must be at least 3 vertices in polygon[] 

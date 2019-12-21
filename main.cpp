@@ -1,44 +1,44 @@
 #include <array>
-#include <fstream>
-#include <iostream>
+
 #include <vector>
-#include "model/Action.h"
 #include "sdl.h"
 #include "imgui.h"
-#include "model/Rectangle.h"
-#include "model/Circle.h"
-#include "model/Loader.h"
-#include "model/Polyfigure.h"
+#include "Loader.h"
 #include <stack>
+#include "Program.h"
+void setBrush(Program& program) {
 
-#include "Factory.h"
-void setBrush(Brush& brush) {
+	ImGui::InputInt("Blue", &(program.getBrush()->blue));
 
-	ImGui::InputInt("Green", &brush.green);
+	ImGui::InputInt("Green", &(program.getBrush()->green));
 
-	ImGui::InputInt("Blue", &brush.blue);
-
-	ImGui::InputInt("Red", &brush.red);
-	if (brush.green > 255) {
-		brush.green = 255;
+	ImGui::InputInt("Red", &(program.getBrush()->red));
+	if (program.getBrush()->red > 255) {
+		program.getBrush()->red = 255;
 	}
-	if (brush.blue > 255) {
-		brush.blue = 255;
+	if (program.getBrush()->blue > 255) {
+		program.getBrush()->blue = 255;
 	}
-	if (brush.red > 255) {
-		brush.red = 255;
+	if (program.getBrush()->green > 255) {
+		program.getBrush()->green = 255;
+	}
+	if (program.getBrush()->red < 0) {
+		program.getBrush()->red = 0;
+	}
+	if (program.getBrush()->blue < 0) {
+		program.getBrush()->blue = 0;
+	}
+	if (program.getBrush()->green < 0) {
+		program.getBrush()->green = 0;
 	}
 }
 
 int main() {
 	Brush brush;
-	Factory factory;
-	std::stack<std::unique_ptr<Action>> history;
-
+	Program program;
   sdl::renderer renderer("Editor");
   bool quit = false;
   std::unique_ptr<Action> action;
-  std::vector<std::unique_ptr<Figure>> figures;
   std::unique_ptr<Builder> active_builder = nullptr;
   const int32_t file_name_length = 128;
   char file_name[file_name_length] = "";
@@ -57,108 +57,68 @@ int main() {
         quit = true;
         break;
       } else if(event.extract(mouse_button_event)) {
-		  if (factory.isBuilding()) {
-			  std::unique_ptr<Figure> figure = factory.buildingFigure(mouse_button_event);
-			  if (figure) {
-				  figures.emplace_back(std::move(figure));
-				  action = std::make_unique<CreateAction>();
-				  history.push(std::move(action));
-				  active_builder = nullptr;
-			  }
-		  }
-		  else {
-			  if (mouse_button_event.button() == sdl::mouse_button_event::right && mouse_button_event.type() == sdl::mouse_button_event::down) {
-				  for (int i = 0; i < figures.size(); ++i) {
-					  if (figures[i]->isInside(vertex{ mouse_button_event.x(), mouse_button_event.y() })) {
-						  figures.erase(figures.begin() + i);
-						  break;
-					  }
-				  }
-			  }
-		  }
+		  program.mouseClickListener(mouse_button_event);
       }
     }
 
-    for(const std::unique_ptr<Figure>& figure: figures){
-      figure->render(renderer);
-    }
+	program.render(renderer);
 
     ImGui::Begin("Menu");
     if(ImGui::Button("New canvas")){
-      figures.clear();
-    }
+		program.clear();
+	
+	}
     ImGui::InputText("File name", file_name, file_name_length - 1);
-    if(ImGui::Button("Save")){
-      std::ofstream os(file_name);
-      if(os){
-        for(const std::unique_ptr<Figure>& figure: figures){
-          figure->save(os);
-        }
-      }
+    if(ImGui::Button("Save")) {
+		program.saveFile(file_name);
     }
     ImGui::SameLine();
     if(ImGui::Button("Load")){
-      std::ifstream is(file_name);
-      if(is){
-         loader loader;
-         figures = loader.load(is);
-      }
+		program.loadFile(file_name);
     }
     if(ImGui::Button("Rectangle")){
-		factory.startBuildRectangle(brush);
+		program.addRectangle();
     }
 	ImGui::SameLine();
 
 	if (ImGui::Button("Trapeze")) {
-		factory.startBuildTrapeze(brush);
+		program.addTrapeze();
 	}
 	ImGui::SameLine();
 
 	if (ImGui::Button("Rhombus")) {
-		factory.startBuildRhombus(brush);
+		program.addRhombus();
 	}
 	ImGui::SameLine();
 
 	if (ImGui::Button("Polyline")) {
-		factory.startPolyBuildLine(brush);
+		program.addPolyline();
 	}
 	ImGui::SameLine();
 
 	if (ImGui::Button("Polyfigure")) {
-		factory.startPolyBuildFigure(brush);
+		program.addPolyfigure();
 	}
 	ImGui::SameLine();
 
 	if (ImGui::Button("Circle")) {
-		factory.startBuildCircle(brush);
+		program.addCircle();
 	}
 
 	if (ImGui::Button("undo")) {
-		if (!history.empty()) {
-			action = std::move(history.top());
-			history.pop();
-			action->undoAction(figures);
-			action = nullptr;
-		}
+		program.undo();
 	}
-	setBrush(brush);
+	setBrush(program);
 	ImGui::InputInt("Remove_Id", &remove_id);
 
     if(ImGui::Button("Remove")) {
-		if (figures.size() > remove_id) {
-		std::unique_ptr<Figure> figure = std::move(figures[remove_id]);
-		action = std::make_unique<DeleteAction>(std::move(figure),remove_id);
-		history.push(std::move(action));
-			figures.erase(figures.begin()+remove_id);
-
-			
-		}
+		program.remove(remove_id);
     }
     // Undo
     ImGui::End();
 
     renderer.present();
   }
-
+  return 0;
 
 }

@@ -1,15 +1,10 @@
-#pragma once
-#include "Figure.h"
-
-#include "Helper.h"
+#include "Trapeze.h"
 
 
-struct Trapeze : Figure {
-public:
 
-	Trapeze(const std::array<vertex, 4>& vertices) : vertices_(vertices) {}
+	Trapeze::Trapeze(const std::array<vertex, 4>& vertices) : vertices_(vertices) {}
 
-	void render(const sdl::renderer& renderer)  override {
+	void Trapeze::render(const sdl::renderer& renderer)   {
 		renderer.set_color(brush.red, brush.green, brush.blue);
 		for (int32_t i = 0; i < 4; ++i) {
 			renderer.draw_line(vertices_[i].x, vertices_[i].y,
@@ -17,12 +12,12 @@ public:
 		}
 		renderer.set_color(0, 0, 0);
 	}
-	void addBrush(Brush& brush)  override {
+	void Trapeze::addBrush(Brush& brush)   {
 		this->brush.blue = brush.blue;
 		this->brush.red = brush.red;
 		this->brush.green = brush.green;
 	}
-	void save(std::ostream& os) const override {
+	void Trapeze::save(std::ostream& os) const  {
 		os << "trapeze\n";
 		for (int32_t i = 0; i < 4; ++i) {
 			os << vertices_[i].x << ' ' << vertices_[i].y << '\n';
@@ -30,22 +25,13 @@ public:
 		os << brush.red << ' ' << brush.green << ' ' << brush.blue << '\n';
 
 	}
-	bool isInside(vertex& v) override {
-	return	isInside1(vertices_, v);
+	bool Trapeze::isInside(vertex& v)  {
+
+		std::vector<vertex> vect(this->vertices_.begin(), this->vertices_.end());;
+
+		return	isInside1(vect, v);
 	}
-	~Trapeze() { }
-
-private:
-	std::array<vertex, 4> vertices_;
-	Brush brush;
-
-};
-
-
-
-struct TrapezeBuilder : Builder {
-public:
-	std::unique_ptr<Figure> add_vertex(const vertex& v) {
+	std::unique_ptr<Figure> TrapezeBuilder::add_vertex(const vertex& v) {
 		vertices_[n_] = v;
 		n_ += 1;
 		if (n_ != 4) {
@@ -55,13 +41,8 @@ public:
 		figure->addBrush(brush);
 		return std::move(figure);
 	}
-	TrapezeBuilder(Brush& brush) {
+	TrapezeBuilder::TrapezeBuilder(Brush& brush) {
 		this->brush.blue = brush.blue;
 		this->brush.red = brush.red;
 		this->brush.green = brush.green;
 	}
-private:
-	int32_t n_ = 0;
-	std::array<vertex, 4> vertices_;
-	Brush brush;
-};

@@ -1,6 +1,11 @@
 #pragma once
 
-#include "Builder.h"
+#include <memory>
+#include "sdl.h"
+#include <array>
+#include <vector>
+#include <math.h>
+#define INF INT16_MAX;
 struct vertex {
 	int32_t x, y;
 
@@ -40,24 +45,28 @@ public:
 struct CreateAction : Action
 {
 public:
-	void undoAction(std::vector<std::unique_ptr<Figure>>& figures) override {
-		figures.erase(figures.end() - 1);
-	}
-	CreateAction() {}
-	~CreateAction() {}
+	void undoAction(std::vector<std::unique_ptr<Figure>>& figures) override;
 };
 struct DeleteAction : Action
 {
 public:
-	void undoAction(std::vector<std::unique_ptr<Figure>>& figures) override {
-		figures.insert(figures.begin() + index, std::move(figure));
-	}
-	DeleteAction(std::unique_ptr<Figure> figure, size_t index) {
-		this->figure = (std::move(figure));
-		this->index = index;
-	}
-	~DeleteAction() {}
+	void undoAction(std::vector<std::unique_ptr<Figure>>& figures) override;
+	explicit DeleteAction(std::unique_ptr<Figure> figure, size_t index);
 private:
 	std::unique_ptr<Figure> figure;
 	size_t index;
 };
+
+bool onSegment(vertex p, vertex q, vertex r);
+
+// To find orientation of ordered triplet (p, q, r). 
+// The function returns following values 
+// 0 --> p, q and r are colinear 
+// 1 --> Clockwise 
+// 2 --> Counterclockwise 
+int orientation(vertex p, vertex q, vertex r);
+
+bool doIntersect(vertex p1, vertex q1, vertex p2, vertex q2);
+
+
+bool isInside1(std::vector<vertex>& polygon, vertex p);

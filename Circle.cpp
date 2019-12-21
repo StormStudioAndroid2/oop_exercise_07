@@ -1,25 +1,21 @@
 #pragma once
-#include "Figure.h"
+#include "Circle.h"
 #include "math.h"
-#include "sdl.h"
 
-struct Circle : Figure {
-public:
+	Circle::Circle(const std::array<vertex, 2>& vertices) : vertices_(vertices) {}
 
-	Circle(const std::array<vertex, 2>& vertices) : vertices_(vertices) {}
-
-	void render(const sdl::renderer& renderer)  override {
+	void Circle::render(const sdl::renderer& renderer)   {
 		renderer.set_color(brush.red, brush.green, brush.blue);
 		;
 		DrawCircle(renderer, vertices_[0].x, vertices_[0].y, this->getLength(vertices_[0], vertices_[1]));
 		renderer.set_color(0, 0, 0);
 	}
-	void addBrush(Brush& brush)  override {
+	void Circle::addBrush(Brush& brush)   {
 		this->brush.blue = brush.blue;
 		this->brush.red = brush.red;
 		this->brush.green = brush.green;
 	}
-	void save(std::ostream& os) const override {
+	void Circle::save(std::ostream& os) const  {
 		os << "circle\n";
 		for (int32_t i = 0; i < 2; ++i) {
 			os << vertices_[i].x << ' ' << vertices_[i].y << '\n';
@@ -27,14 +23,12 @@ public:
 		os << brush.red << ' ' << brush.green << ' ' << brush.blue << '\n';
 	}
 
-	bool isInside(vertex& v) override {
+	bool Circle::isInside(vertex& v)  {
 		int32_t radius = (vertices_[0].x - vertices_[1].x)*(vertices_[0].x - vertices_[1].x) + (vertices_[0].y - vertices_[1].y)*(vertices_[0].y - vertices_[1].y);
 		return ((vertices_[0].x - v.x)*(vertices_[0].x - v.x) + (vertices_[0].y - v.y)*(vertices_[0].y - v.y) < radius);
 	}
-	~Circle() { }
-	
-private:
-	void DrawCircle(const sdl::renderer&renderer, int32_t centreX, int32_t centreY, int32_t radius)
+
+	void Circle::DrawCircle(const sdl::renderer&renderer, int32_t centreX, int32_t centreY, int32_t radius)
 	{
 		const int32_t diameter = (radius * 2);
 
@@ -71,19 +65,15 @@ private:
 			}
 		}
 	}
-	int32_t getLength(const vertex& v1, const vertex& v2) {
+	int32_t Circle::getLength(const vertex& v1, const vertex& v2) {
 		return (int32_t)sqrt((v1.x - v2.x)*(v1.x - v2.x) + (v1.y - v2.y)*(v1.y - v2.y));
 	}
-	std::array<vertex, 2> vertices_;
-	Brush brush;
 	
-};
 
 
 
-struct CircleBuilder : Builder {
-public:
-	std::unique_ptr<Figure> add_vertex(const vertex& v) {
+
+	std::unique_ptr<Figure> CircleBuilder::add_vertex(const vertex& v) {
 		vertices_[n_] = v;
 		n_ += 1;
 		if (n_ != 2) {
@@ -93,13 +83,8 @@ public:
 		figure->addBrush(brush);
 		return std::move(figure);
 	}
-	CircleBuilder(Brush& brush) {
+	CircleBuilder::CircleBuilder(Brush& brush) {
 		this->brush.blue = brush.blue;
 		this->brush.red = brush.red;
 		this->brush.green = brush.green;
 	}
-private:
-	int32_t n_ = 0;
-	std::array<vertex, 2> vertices_;
-	Brush brush;
-};
